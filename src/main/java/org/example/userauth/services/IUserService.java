@@ -1,8 +1,8 @@
 package org.example.userauth.services;
 
-import org.apache.catalina.User;
+import org.example.userauth.models.User;
 
 public interface IUserService {
-    User signUp();
+    User signUp(String username, String email, String password);
     User login();
 }
