@@ -3,12 +3,17 @@ package org.example.userauth.services;
 
 import org.example.userauth.models.User;
 import org.example.userauth.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService implements IUserService{
-    public final UserRepository userRepository;
+    public  UserRepository userRepository;
+    public  BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -17,10 +22,10 @@ public class UserService implements IUserService{
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setHashedPassword(password);
+        user.setHashedPassword(bCryptPasswordEncoder.encode(password));
 
-        return userRepository.save(user);
-
+        User user1 = userRepository.save(user);
+        return user1;
     }
 
     @Override
