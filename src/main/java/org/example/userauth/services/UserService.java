@@ -1,6 +1,7 @@
 package org.example.userauth.services;
 
 
+import org.example.userauth.models.Token;
 import org.example.userauth.models.User;
 import org.example.userauth.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,7 +30,12 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public User login() {
+    public Token login(String email, String password) {
+
+        //check user existing or not
+        User user = userRepository.findUserByEmailAndAndHashedPassword(email, password);
+        //check password is matching with hashed pass using bcrypt
+        //if matching create token and return
         return null;
     }
 }
