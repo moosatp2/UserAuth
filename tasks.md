@@ -17,7 +17,7 @@
 2. Create the `/login` endpoint in the controller.
 3. Implement authentication logic using bcrypt to validate passwords.
 4. Test the endpoint using Postman or cURL to ensure correct responses.
-
+*****Completed******
 ---
 
 ## 2. Create and Implement JWT Token-Based Authentication (Separate Branch)
