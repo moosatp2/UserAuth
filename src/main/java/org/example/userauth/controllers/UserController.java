@@ -1,6 +1,10 @@
 package org.example.userauth.controllers;
 
+import org.apache.tomcat.util.buf.UEncoder;
+import org.example.userauth.dtos.LoginRequestDto;
+import org.example.userauth.dtos.LoginResponseDto;
 import org.example.userauth.dtos.SignUpRequestDto;
+import org.example.userauth.models.Token;
 import org.example.userauth.models.User;
 import org.example.userauth.services.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +33,18 @@ public class UserController {
         return user;
     }
     @PostMapping("/login")
-    private User login(){
-        return null;
+    private LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto){
+
+        String email = loginRequestDto.getEmail();
+        String password = loginRequestDto.getPassword();
+
+        Token newToken = userService.login(email, password);
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto();
+        loginResponseDto.setUsername(newToken.getUser().getUsername());
+        loginResponseDto.setValue(newToken.getValue());
+        loginResponseDto.setExpireAt(newToken.getExpireAt());
+
+        return loginResponseDto;
     }
 }

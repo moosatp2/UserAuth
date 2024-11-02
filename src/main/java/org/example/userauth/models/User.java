@@ -12,3 +12,5 @@ public class User extends BaseModel {
     private String hashedPassword;
     private String email;
 }
+
+

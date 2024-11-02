@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
-    User save(User user);
-    User findUserByEmailAndAndHashedPassword(String email, String password);
+//    User save(User user);
+    User findUserByEmail(String email);
 }
