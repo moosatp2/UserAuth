@@ -1,6 +1,6 @@
 package org.example.userauth.controllers;
 
-import org.apache.tomcat.util.buf.UEncoder;
+
 import org.example.userauth.dtos.LoginRequestDto;
 import org.example.userauth.dtos.LoginResponseDto;
 import org.example.userauth.dtos.SignUpRequestDto;
