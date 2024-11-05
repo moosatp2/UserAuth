@@ -35,16 +35,17 @@ public class UserController {
     @PostMapping("/login")
     private LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto){
 
-        String email = loginRequestDto.getEmail();
-        String password = loginRequestDto.getPassword();
-
-        Token newToken = userService.login(email, password);
-
-        LoginResponseDto loginResponseDto = new LoginResponseDto();
-        loginResponseDto.setUsername(newToken.getUser().getUsername());
-        loginResponseDto.setValue(newToken.getValue());
-        loginResponseDto.setExpireAt(newToken.getExpireAt());
-
-        return loginResponseDto;
+//        String email = loginRequestDto.getEmail();
+//        String password = loginRequestDto.getPassword();
+//
+//        Token newToken = userService.login(email, password);
+//
+//        LoginResponseDto loginResponseDto = new LoginResponseDto();
+//        loginResponseDto.setUsername(newToken.getUser().getUsername());
+//        loginResponseDto.setValue(newToken.getValue());
+//        loginResponseDto.setExpireAt(newToken.getExpireAt());
+//
+//        return loginResponseDto;
+        return null;
     }
 }
