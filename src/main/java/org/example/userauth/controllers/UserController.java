@@ -7,6 +7,13 @@ import org.example.userauth.dtos.SignUpRequestDto;
 import org.example.userauth.models.Token;
 import org.example.userauth.models.User;
 import org.example.userauth.services.UserService;
+import org.example.userauth.utils.JwtUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     public UserService userService;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/signup")
@@ -33,19 +44,17 @@ public class UserController {
         return user;
     }
     @PostMapping("/login")
-    private LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto){
+    private LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
 
-//        String email = loginRequestDto.getEmail();
-//        String password = loginRequestDto.getPassword();
-//
-//        Token newToken = userService.login(email, password);
-//
-//        LoginResponseDto loginResponseDto = new LoginResponseDto();
-//        loginResponseDto.setUsername(newToken.getUser().getUsername());
-//        loginResponseDto.setValue(newToken.getValue());
-//        loginResponseDto.setExpireAt(newToken.getExpireAt());
-//
-//        return loginResponseDto;
-        return null;
+        String email = loginRequestDto.getEmail();
+        String password = loginRequestDto.getPassword();
+
+        Token token = userService.login(email, password);
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto();
+        loginResponseDto.setValue(token.getValue());
+        loginResponseDto.setUsername(token.getUser().getEmail());
+
+        return loginResponseDto;
     }
 }

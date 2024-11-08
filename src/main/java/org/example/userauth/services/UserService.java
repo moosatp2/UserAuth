@@ -5,26 +5,32 @@ import org.example.userauth.models.Token;
 import org.example.userauth.models.User;
 import org.example.userauth.repositories.TokenRepository;
 import org.example.userauth.repositories.UserRepository;
+import org.example.userauth.utils.JwtUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
-
 @Service
-public class UserService implements IUserService{
+public class UserService implements UserDetailsService, IUserService {
     public  UserRepository userRepository;
     public  BCryptPasswordEncoder bCryptPasswordEncoder;
     public  TokenRepository tokenRepository;
+    private final JwtUtil jwtUtil;
+//    private final AuthenticationManager authenticationManager;
 
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
-                       TokenRepository tokenRepository) {
+                       TokenRepository tokenRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tokenRepository = tokenRepository;
+        this.jwtUtil = jwtUtil;
+//        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -55,23 +61,20 @@ public class UserService implements IUserService{
 
         if(!passwordMatch) {
             System.out.println("incorrect password");
-//            return null;
+        return null;
         }
-        //if matching create token and return
-
-        String tokenData = user.getEmail() + ":" + new Date().getTime();
-        String tokenValue = Base64.getEncoder().encodeToString(tokenData.getBytes(StandardCharsets.UTF_8));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR, 24);
-        Date expireAt = calendar.getTime();
+        String token = jwtUtil.createToken(user);
 
         Token newToken = new Token();
         newToken.setUser(user);
-        newToken.setValue(tokenValue);
-        newToken.setExpireAt(expireAt);
+        newToken.setValue(token);
 
         return tokenRepository.save(newToken);
 
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }

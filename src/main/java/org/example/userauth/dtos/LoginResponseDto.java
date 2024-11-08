@@ -14,5 +14,4 @@ public class LoginResponseDto {
 
     private String value;
     private String username;
-    private Date expireAt;
 }
