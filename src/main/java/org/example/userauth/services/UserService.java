@@ -74,6 +74,12 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
+    public User getUser(Long id){
+        return userRepository.findUserById(id);
+    }
+
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }

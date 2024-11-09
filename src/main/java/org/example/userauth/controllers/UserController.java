@@ -4,6 +4,7 @@ package org.example.userauth.controllers;
 import org.example.userauth.dtos.LoginRequestDto;
 import org.example.userauth.dtos.LoginResponseDto;
 import org.example.userauth.dtos.SignUpRequestDto;
+import org.example.userauth.dtos.UserResponseDto;
 import org.example.userauth.models.Token;
 import org.example.userauth.models.User;
 import org.example.userauth.services.UserService;
@@ -14,10 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -56,5 +54,18 @@ public class UserController {
         loginResponseDto.setUsername(token.getUser().getEmail());
 
         return loginResponseDto;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+
+        User user = new User();
+        user = userService.getUser(id);
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setId(user.getId());
+        userResponseDto.setEmail(user.getEmail());
+        userResponseDto.setUsername(user.getUsername());
+        ResponseEntity<UserResponseDto> responseEntity =  new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        return responseEntity;
     }
 }
