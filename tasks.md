@@ -37,9 +37,10 @@
    ```bash
    git checkout -b feature/jwt-auth
 2. Set up Spring Security for JWT token-based authentication.
-3.   Implement the auth server to issue JWTs.
-4.   Modify endpoints to require JWT validation for access.
+3.   Implement the auth server to issue JWTs.  ***completed***
+4.   Modify endpoints to require JWT validation for access. 
 5.  Test endpoints with token-based authentication.
+6.  Implement error handling 
 
 ## 3. Implement OTP-Based JWT Token Authentication (Separate Branch)
 
