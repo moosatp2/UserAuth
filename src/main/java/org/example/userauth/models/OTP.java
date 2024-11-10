@@ -17,8 +17,7 @@ public class OTP extends BaseModel{
 //    @JoinColumn(name = "user_id")
 //    private User user;
     private String email;
-    private String otpValue;
+    private String otpHashValue;
     private LocalDateTime expiryTime;
     private boolean isVerified;
-
 }

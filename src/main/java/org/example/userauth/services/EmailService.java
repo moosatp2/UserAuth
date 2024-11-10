@@ -6,6 +6,7 @@ import org.example.userauth.utils.OtpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,12 @@ public class EmailService {
     private JavaMailSender mailSender;
     @Autowired
     private OtpRepository otpRepository;
+
+    private  BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public EmailService(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     public void sendSimpleMail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -29,7 +36,7 @@ public class EmailService {
         String otp = OtpUtil.generateOtp();
         OTP otpEntry = new OTP();
         otpEntry.setEmail(email);
-        otpEntry.setOtpValue(otp);
+        otpEntry.setOtpHashValue(bCryptPasswordEncoder.encode(otp));
         otpEntry.setExpiryTime(LocalDateTime.now().plusMinutes(5));
         otpEntry.setVerified(false);
         otpRepository.save(otpEntry);

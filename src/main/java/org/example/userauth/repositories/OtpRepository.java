@@ -8,6 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface OtpRepository extends JpaRepository<OTP, Long> {
-    Optional<OTP> findByEmailAndOtpValue(String email, String otpValue);
+    Optional<OTP> findTopByEmailOrderByExpiryTimeDesc(String email);
 
 }
