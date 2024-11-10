@@ -22,15 +22,17 @@ public class UserService implements UserDetailsService, IUserService {
     public  BCryptPasswordEncoder bCryptPasswordEncoder;
     public  TokenRepository tokenRepository;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 //    private final AuthenticationManager authenticationManager;
 
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
-                       TokenRepository tokenRepository, JwtUtil jwtUtil) {
+                       TokenRepository tokenRepository, JwtUtil jwtUtil, EmailService emailService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tokenRepository = tokenRepository;
         this.jwtUtil = jwtUtil;
 //        this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
-    public Token login(String email, String password) {
+    public String login(String email, String password) {
 
         //check user existing or not
         User user = userRepository.findUserByEmail(email);
@@ -63,14 +65,17 @@ public class UserService implements UserDetailsService, IUserService {
             System.out.println("incorrect password");
         return null;
         }
-        String token = jwtUtil.createToken(user);
 
-        Token newToken = new Token();
-        newToken.setUser(user);
-        newToken.setValue(token);
 
-        return tokenRepository.save(newToken);
-
+//        String token = jwtUtil.createToken(user);
+//
+//        Token newToken = new Token();
+//        newToken.setUser(user);
+//        newToken.setValue(token);
+//
+//        return tokenRepository.save(newToken);
+        emailService.sendOtp(email);
+        return  "OTP Send Successfully";
     }
 
     @Override
@@ -78,6 +83,18 @@ public class UserService implements UserDetailsService, IUserService {
         return userRepository.findUserById(id);
     }
 
+    public Token jwtGen(String email){
+
+        User user = userRepository.findUserByEmail(email);
+
+        String token = jwtUtil.createToken(user);
+
+        Token newToken = new Token();
+        newToken.setUser(user);
+        newToken.setValue(token);
+
+        return tokenRepository.save(newToken);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

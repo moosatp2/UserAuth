@@ -1,12 +1,11 @@
 package org.example.userauth.controllers;
 
 
-import org.example.userauth.dtos.LoginRequestDto;
-import org.example.userauth.dtos.LoginResponseDto;
-import org.example.userauth.dtos.SignUpRequestDto;
-import org.example.userauth.dtos.UserResponseDto;
+import org.example.userauth.dtos.*;
 import org.example.userauth.models.Token;
 import org.example.userauth.models.User;
+import org.example.userauth.services.EmailService;
+import org.example.userauth.services.OtpVerificationService;
 import org.example.userauth.services.UserService;
 import org.example.userauth.utils.JwtUtil;
 import org.springframework.http.HttpStatus;
@@ -24,11 +23,14 @@ public class UserController {
     public UserService userService;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
-
-    public UserController(UserService userService, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
+    private final EmailService emailService;
+    private final OtpVerificationService otpVerificationService;
+    public UserController(UserService userService, JwtUtil jwtUtil, AuthenticationManager authenticationManager, EmailService emailService, OtpVerificationService otpVerificationService) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
+        this.otpVerificationService = otpVerificationService;
     }
 
     @PostMapping("/signup")
@@ -47,13 +49,32 @@ public class UserController {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
-        Token token = userService.login(email, password);
+
+
+        String str = userService.login(email, password);
 
         LoginResponseDto loginResponseDto = new LoginResponseDto();
-        loginResponseDto.setValue(token.getValue());
-        loginResponseDto.setUsername(token.getUser().getEmail());
+        loginResponseDto.setValue(str);
+        loginResponseDto.setUsername(email);
 
         return loginResponseDto;
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(@RequestBody OtpRequestDto otpRequestDto) {
+
+        String email = otpRequestDto.getEmail();
+        String otp = otpRequestDto.getOtp();
+
+        boolean isValid = otpVerificationService.verifyOtp(email, otp);
+        if (isValid) {
+            Token token = userService.jwtGen(email);
+//            return ResponseEntity.ok("OTP verified successfully" + );
+             ResponseEntity<String> responseEntity = new ResponseEntity<>("OTP verified successfully. Token:" + token.getValue() , HttpStatus.OK);
+             return responseEntity;
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired OTP");
+        }
     }
 
     @GetMapping("/{id}")
@@ -65,7 +86,10 @@ public class UserController {
         userResponseDto.setId(user.getId());
         userResponseDto.setEmail(user.getEmail());
         userResponseDto.setUsername(user.getUsername());
-        ResponseEntity<UserResponseDto> responseEntity =  new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        ResponseEntity<UserResponseDto> responseEntity =
+                new ResponseEntity<>(userResponseDto, HttpStatus.OK);
         return responseEntity;
     }
+
+
 }

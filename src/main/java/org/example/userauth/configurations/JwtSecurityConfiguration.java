@@ -42,7 +42,7 @@ public class JwtSecurityConfiguration  {
                 .authorizeRequests()
                 .requestMatchers("/user/login").permitAll()
                 .requestMatchers("/user/signup").permitAll()
-//                .requestMatchers("/user/**").permitAll()
+               .requestMatchers("/user/verify-otp").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
